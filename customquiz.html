@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Your Own Quiz</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #1C2E4A;
+
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  color: #333;
+}
+
+.container {
+  background: #BDC4D4;
+  padding: 25px;
+  border-radius: 15px;
+  width: 95%;
+  max-width: 600px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+h2 {
+  text-align: center;
+}
+
+input, select, button {
+  width: 90%;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #1d304d;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #3a5275
+}
+
+.question-input {
+font-size: 18px;
+padding: 16px;
+font-weight: bold;
+border: 3px solid #2a5298
+
+}
+
+.option {
+  padding: 10px;
+  border: 2px solid #D1CFC9;
+  border-radius: 8px;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.option:hover {
+  background: #3a5275;
+  color: white;
+}
+
+.hidden {
+  display: none;
+}
+
+.score {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<!-- CREATE QUIZ SECTION -->
+<div id="createSection">
+  <h2>Create Your Quiz</h2>
+
+  <input type="text" id="questionInput" class="question-input" placeholder="Enter your question">
+
+  <input type="text" id="option1" placeholder="Option 1">
+  <input type="text" id="option2" placeholder="Option 2">
+  <input type="text" id="option3" placeholder="Option 3">
+  <input type="text" id="option4" placeholder="Option 4">
+
+  <select id="correctAnswer">
+    <option value="0">Correct Answer: Option 1</option>
+    <option value="1">Correct Answer: Option 2</option>
+    <option value="2">Correct Answer: Option 3</option>
+    <option value="3">Correct Answer: Option 4</option>
+  </select>
+
+  <button onclick="addQuestion()">Add Question</button>
+  <button onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<!-- QUIZ SECTION -->
+<div id="quizSection" class="hidden">
+  <h2 id="quizQuestion"></h2>
+  <div id="quizOptions"></div>
+  <button onclick="nextQuestion()">Next</button>
+</div>
+
+<div id="resultSection" class="hidden">
+  <div class="score" id="finalScore"></div>
+</div>
+
+</div>
+
+<script>
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+
+function addQuestion() {
+  const question = document.getElementById("questionInput").value;
+  const options = [
+    document.getElementById("option1").value,
+    document.getElementById("option2").value,
+    document.getElementById("option3").value,
+    document.getElementById("option4").value
+  ];
+  const correct = parseInt(document.getElementById("correctAnswer").value);
+
+  if (!question || options.includes("")) {
+    alert("Please fill out all fields.");
+    return;
+  }
+
+  questions.push({ question, options, correct });
+
+  alert("Question Added!");
+
+  document.getElementById("questionInput").value = "";
+  document.getElementById("option1").value = "";
+  document.getElementById("option2").value = "";
+  document.getElementById("option3").value = "";
+  document.getElementById("option4").value = "";
+}
+
+function startQuiz() {
+  if (questions.length === 0) {
+    alert("Add at least one question first!");
+    return;
+  }
+
+  document.getElementById("createSection").classList.add("hidden");
+  document.getElementById("quizSection").classList.remove("hidden");
+
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[currentIndex];
+  document.getElementById("quizQuestion").textContent = q.question;
+
+  const optionsDiv = document.getElementById("quizOptions");
+  optionsDiv.innerHTML = "";
+
+  q.options.forEach((opt, index) => {
+    const div = document.createElement("div");
+    div.textContent = opt;
+    div.classList.add("option");
+    div.onclick = () => selectAnswer(index);
+    optionsDiv.appendChild(div);
+  });
+}
+
+function selectAnswer(selectedIndex) {
+  const correctIndex = questions[currentIndex].correct;
+
+  if (selectedIndex === correctIndex) {
+    score++;
+  }
+
+  nextQuestion();
+}
+
+function nextQuestion() {
+  currentIndex++;
+
+  if (currentIndex < questions.length) {
+    showQuestion();
+  } else {
+    endQuiz();
+  }
+}
+
+function endQuiz() {
+  document.getElementById("quizSection").classList.add("hidden");
+  document.getElementById("resultSection").classList.remove("hidden");
+
+  document.getElementById("finalScore").textContent =
+    "Your Score: " + score + " / " + questions.length;
+}
+// Button Click Sound
+const clickSound = new Audio("universfield-com...52734 - Copy.mp3");
+
+// Play sound on every button click
+document.querySelectorAll("button").forEach(button => {
+  button.addEventListener("click", () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  });
+});
+</script>
+
+</body>
+</html>
